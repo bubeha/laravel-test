@@ -9,7 +9,6 @@ use App\Repositories\Item\ItemRepository;
 use Illuminate\Config\Repository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Webmozart\Assert\Assert;
 
 final readonly class ItemController
 {
@@ -20,8 +19,6 @@ final readonly class ItemController
     public function __invoke(Request $request): JsonResource
     {
         $perPage = (int)$request->get('per_page', $this->config->get('pagination.per_page'));
-
-        Assert::integer($perPage);
 
         return ItemResource::collection($this->repository->paginate($perPage));
     }

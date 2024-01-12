@@ -18,7 +18,7 @@ final readonly class CacheMiddleware
         return Cache::tags(['item'])
             ->remember(
                 CacheHelper::generateRouteKey($request->url()),
-                300,
+                config('cache.route.ttl'),
                 static fn () => $next($request));
     }
 }
