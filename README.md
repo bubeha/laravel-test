@@ -2,10 +2,10 @@
 
 * PHP >= 8.2.0
 * Laravel >= 10.0
+* Docker >= 24
+* Docker Compose >= 3
 
 ## Installation
-
-> This project requires PHP 8.2+, Laravel 10, Docker 24+, Docker Compose 3+.
 
 ```bash
 // Clone source code.
