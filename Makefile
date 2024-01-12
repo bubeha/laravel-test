@@ -5,6 +5,7 @@ init:
 	$(DOCKER_COMPOSE) run --rm php-cli composer install
 	$(DOCKER_COMPOSE) up -d
 	$(DOCKER_COMPOSE) run --rm php-cli wait-for-it postgres:5432 -t 60
+	$(DOCKER_COMPOSE) run --rm php-cli wait-for-it redis:6379 -t 60
 	$(DOCKER_COMPOSE) run --rm php-cli php artisan migrate --seed
 
 start:
