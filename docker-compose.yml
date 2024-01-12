@@ -1,0 +1,71 @@
+version: "3.8"
+
+services:
+    nginx:
+        build:
+            context: ./docker
+            dockerfile: development/nginx/Dockerfile
+            args:
+                NGINX_VERSION: 1.24
+        ports:
+            - "8080:80"
+        volumes:
+            - ".:/application"
+
+    php-fpm:
+        build:
+            context: ./docker
+            dockerfile: development/php-fpm/Dockerfile
+            args:
+                PHP_VERSION: 8.3
+                XDEBUG_VERSION: 3.3.1
+        user: "$_UID:$_GID"
+        volumes:
+            - ".:/application"
+        environment:
+            PHP_IDE_CONFIG: "serverName=docker"
+            DB_CONNECTION: "pgsql"
+            DB_HOST: "postgres"
+            DB_DATABASE: ${POSTGRES_DB}
+            DB_PORT: "5432"
+            DB_USERNAME: ${POSTGRES_USER}
+            DB_PASSWORD: ${POSTGRES_PASSWORD}
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+
+    php-cli:
+        build:
+            context: ./docker
+            dockerfile: development/php-cli/Dockerfile
+            args:
+                PHP_VERSION: 8.3
+                XDEBUG_VERSION: 3.3.1
+        user: "$_UID:$_GID"
+        volumes:
+            - ".:/application"
+            - "~/.config/composer:$COMPOSER_HOME"
+            - "~/.cache/composer:$COMPOSER_CACHE_DIR"
+        environment:
+            PHP_IDE_CONFIG: "serverName=docker"
+            DB_CONNECTION: "pgsql"
+            DB_HOST: "postgres"
+            DB_DATABASE: ${POSTGRES_DB}
+            DB_PORT: "5432"
+            DB_USERNAME: ${POSTGRES_USER}
+            DB_PASSWORD: ${POSTGRES_PASSWORD}
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+
+    postgres:
+        image: "postgres:14-alpine"
+        environment:
+            - "POSTGRES_USER=$POSTGRES_USER"
+            - "POSTGRES_PASSWORD=$POSTGRES_PASSWORD"
+            - "POSTGRES_DB=$POSTGRES_DB"
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres-volume:/var/lib/postgresql/data
+
+volumes:
+    postgres-volume:
