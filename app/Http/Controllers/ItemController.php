@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ItemResource;
+use App\Http\Resources\PaginateResource;
 use App\Repositories\Item\ItemRepository;
 use Illuminate\Config\Repository;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 
 final readonly class ItemController
 {
@@ -16,10 +16,13 @@ final readonly class ItemController
     {
     }
 
-    public function __invoke(Request $request): JsonResource
+    public function __invoke(Request $request): PaginateResource
     {
         $perPage = (int)$request->get('per_page', $this->config->get('pagination.per_page'));
 
-        return ItemResource::collection($this->repository->paginate($perPage));
+        return new PaginateResource(
+            $this->repository->paginate($perPage),
+            ItemResource::class
+        );
     }
 }
